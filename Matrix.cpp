@@ -26,10 +26,6 @@ Matrix::Matrix(MatrixContainer mtx)
 
 Matrix::~Matrix()
 {
-// 	this->_elements.~MatrixContainer();
-// 	this->_eqationAnswers.~MatrixContainer();
-// 	this->_extension.~MatrixContainer();
-// 	this->_gaussian.~MatrixContainer();
 }
 
 Number& Matrix::operator()(size_t i, size_t j)
@@ -73,8 +69,10 @@ void Matrix::_computeGaussian()
 	
 	for(i=0; i<this->getSize().getISize(); i++) {
 		if(this->_gaussian(i,i) == 0) {
+			bool error = true;
 			for(j=0; j<this->getSize().getJSize(); j++) {
 				if(this->_gaussian(j,i) !=0) {
+					error = false;
 					this->_gaussian.swapRows(i,j);
 					if(this->_hasExtension) {
 						this->_extension.swapRows(i,j);
@@ -82,31 +80,13 @@ void Matrix::_computeGaussian()
 					break;
 				}
 			}
-		}
-	}
-	/*
-	for(k = 0; k < this->getSize().getISize()-1; k++){
-		for(i = k+1; i < this->getSize().getISize(); i++){
-			tmp = this->_gaussian(i,k) / this->_gaussian(k,k);
-			//b[i]-= bu*b[k];
-			for(j = k+1; j < this->getSize().getISize(); j++){
-				this->_gaussian(j,i) -= tmp*this->_gaussian(j,k);
+			if(error) {
+				this->_determinant = 0;
+				this->_gaussian = MatrixContainer();
+				return;
 			}
 		}
 	}
-	
-// 	for(i=0;i<this->getSize().getISize()-1;i++) {
-// 		for(j=i+1;j<this->getSize().getISize();j++) {
-// 			tmp = this->_gaussian(i,i)/this->_gaussian(j,i);
-// 			if(this->_hasExtension) {
-// 				this->_extension(j,0) = this->_extension(j,0)*tmp-this->_gaussian(i,0);
-// 			}
-// 			for(k=0;k<this->getSize().getISize();k++) {
-// 				this->_gaussian(j,k) = this->_gaussian(j,k)*tmp-this->_gaussian(i,k);
-// 			}
-// 		 }
-// 	}
-*/
 	
 	for(i=0;i<this->getSize().getISize()-1;i++){
         for(j=i+1;j<this->getSize().getISize();j++){
@@ -132,7 +112,7 @@ void Matrix::_computeGaussian()
 void Matrix::addMatrix(Matrix mtx)
 {
 	if(this->getSize() != mtx.getSize()) {
-		throw "Error: Matrixes must be same size(Matrix::addMatrix)";
+		throw new MatrixException(MatrixException::Container, "Error: Matrixes must be same size(Matrix::addMatrix)");
 		return;
 	}
 	else {
@@ -147,7 +127,7 @@ void Matrix::addMatrix(Matrix mtx)
 Matrix Matrix::addMatrixChain(Matrix mtx0, Matrix mtx1)
 {
 	if(mtx0.getSize() != mtx1.getSize()) {
-		throw "Error: Matrixes must be same size(Matrix::addMatrixChain)";
+		throw new MatrixException(MatrixException::Container, "Error: Matrixes must be same size(Matrix::addMatrixChain)");
 	}
 	else {
 		Matrix result(mtx0.getSize());
@@ -172,6 +152,9 @@ Matrix Matrix::addNumberChain(Matrix mtx, Number num)
 
 void Matrix::appendExtensionalMatrix(Matrix mtx)
 {
+	if(mtx.getSize().getISize() != this->getSize().getISize()) {
+		throw new MatrixException(MatrixException::Container, "Extensional matrix must have same \"height\" as main");
+	}
 	this->_extension = mtx._elements;
 	this->_hasExtension = true;
 }
@@ -182,7 +165,7 @@ Number Matrix::determinant()
 		this->_computeGaussian();
 	}
 	if(isnan(this->_determinant)) {
-		throw "Error computing determinant";
+		throw new MatrixException(MatrixException::Logical, "Error computing determinant");
 	}
 	return this->_determinant;
 }
@@ -221,7 +204,7 @@ Matrix Matrix::getEquationAnswers()
 	if(this->_computeEquation()) {
 		return this->_eqationAnswers;
 	}
-	throw "Logical error while computing equation system";
+	throw new MatrixException(MatrixException::Logical, "Logical error while computing equation system");
 }
 
 Matrix Matrix::getTransposed()
@@ -248,7 +231,7 @@ void Matrix::multiplyByMatrix(Matrix mtx)
 Matrix Matrix::multiplyByMatrixChain(Matrix mtx0, Matrix mtx1)
 {
 	if(mtx0.getSize().getJSize() != mtx1.getSize().getISize()) {
-		throw "Matrixies sizes are incompatible for multiplection";
+		throw new MatrixException(MatrixException::Container, "Matrixies sizes are incompatible for multiplection");
 	}
 	Matrix result(MatrixSize(mtx0.getSize().getISize(), mtx1.getSize().getJSize()));
 	for(size_t i=0; i<mtx0.getSize().getISize(); i++) {
@@ -284,7 +267,7 @@ Matrix Matrix::multiplyByNumberChain(Matrix mtx, Number num)
 void Matrix::subMatrix(Matrix mtx)
 {
 	if(this->getSize() != mtx.getSize()) {
-		throw "Error matrixies must be the same size";
+		throw new MatrixException(MatrixException::Container, "Error matrixies must be the same size(Matrix::subMatrix)");
 	}
 	for(size_t i=0; i<mtx.getSize().getISize(); i++) {
 		for(size_t j=0; j<mtx.getSize().getJSize(); j++) {
@@ -296,7 +279,7 @@ void Matrix::subMatrix(Matrix mtx)
 Matrix Matrix::subMatrixChain(Matrix mtx0, Matrix mtx1)
 {
 	if(mtx0.getSize() != mtx1.getSize()) {
-		throw "Error matrixies must be the same size";
+		throw new MatrixException(MatrixException::Container, "Error matrixies must be the same size(Matrix::subMatrixChain)");
 	}
 	Matrix mtx(mtx0.getSize());
 	for(size_t i=0; i<mtx0.getSize().getISize(); i++) {
@@ -481,8 +464,11 @@ Matrix Matrix::operator~()
 
 Matrix Matrix::getGaussian()
 {
-// 	if(this->_gaussian.getSize().getISize() == 0) {
+ 	if(this->_gaussian.getSize().getISize() == 0) {
 		this->_computeGaussian();
-// 	}
+ 	}
+ 	if(this->_gaussian.getSize().getISize() == 0) {
+		throw new MatrixException(MatrixException::Container, "Matrix is null");
+	}
 	return Matrix(this->_gaussian);
 }
