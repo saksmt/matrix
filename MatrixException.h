@@ -14,6 +14,29 @@ class MatrixException
 	 */
 public:
 	/**
+	 * Enumeration with error codes for @link MatrixException @endlink
+	 * @brief Error codes
+	 */
+	enum MatrixExceptionType {
+		/**
+		 * Logical error, like zeroes on main diagonal, when computing equation
+		 * @brief Logical error
+		 */
+		Logical,
+		/**
+		 * Out of range error, appears only when you try to access element which doesn't exist
+		 * @brief Out of range error
+		 */
+		OutOfRange,
+		/**
+		 * Container error, appears when you try to construct matrix from vector with differnt row sizes
+		 * or when you try to compute arithmetic operation on matrixies with different sizes
+		 * @brief Container error
+		 */
+		Container
+	};
+	
+	/**
 	 * Default destructor
 	 */
     ~MatrixException();
@@ -37,29 +60,6 @@ public:
 	 * @return Message
 	 */
 	const char * getMessage();
-	
-	/**
-	 * Enumeration with error codes for @link MatrixException @endlink
-	 * @brief Error codes
-	 */
-	enum MatrixExceptionType {
-		/**
-		 * Logical error, like zeroes on main diagonal, when computing equation
-		 * @brief Logical error
-		 */
-		Logical,
-		/**
-		 * Out of range error, appears only when you try to access element which doesn't exist
-		 * @brief Out of range error
-		 */
-		OutOfRange,
-		/**
-		 * Container error, appears when you try to construct matrix from vector with differnt row sizes
-		 * or when you try to compute arithmetic operation on matrixies with different sizes
-		 * @brief Container error
-		 */
-		Container
-	};
 	
 private:
     MatrixExceptionType _type;

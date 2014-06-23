@@ -218,6 +218,13 @@ public:
 	void transpose();
 	
 	/**
+	 * Multiplies specified row with number
+	 * @param row Row to multiply
+	 * @param num Integral value to multimply with
+	 */
+	void multiplyRowByNumber(size_t row, Number num);
+	
+	/**
 	 * Transforms copy of current matrix to get transposed one
 	 * without modification of source
 	 * @brief Get transposed matrix
@@ -242,6 +249,12 @@ public:
 	 * @return Diagonal matrix
 	 */
 	static Matrix diagonal(Number num, MatrixSize size);
+	
+	/**
+	 * Get norm of matrix
+	 * @return Matrix norm
+	 */
+	Number norm();
 	
 	/**
 	 * Prints matrix in human readable format to standart output

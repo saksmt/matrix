@@ -472,3 +472,24 @@ Matrix Matrix::getGaussian()
 	}
 	return Matrix(this->_gaussian);
 }
+
+void Matrix::multiplyRowByNumber(size_t row, Number num) {
+ 	for(size_t j=0; j<this->getSize().getJSize(); j++) {
+	 	this->_elements(row,j) *= num;
+ 	}
+}
+
+Number Matrix::norm()
+{
+	std::vector<Number> a(this->getSize().getJSize(), 0);
+	Number norm = -1;
+	for(size_t j=0; j<this->getSize().getJSize(); j++) {
+		for(size_t i=0; i<this->getSize().getISize(); i++) {
+			a[j] += fabs(this->_elements(i,j));
+		}
+		if(a[j] > norm) {
+			norm = a[j];
+		}
+	}
+	return norm;
+}
