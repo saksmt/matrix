@@ -225,7 +225,9 @@ Matrix Matrix::identity(MatrixSize size)
 
 void Matrix::multiplyByMatrix(Matrix mtx)
 {
-	(*this) = (*this)*mtx;
+	Matrix m(this->getSize());
+	m._elements = MatrixContainer(this->_elements);
+	this->_elements = (m*mtx)._elements;
 }
 
 Matrix Matrix::multiplyByMatrixChain(Matrix mtx0, Matrix mtx1)
@@ -262,6 +264,7 @@ Matrix Matrix::multiplyByNumberChain(Matrix mtx, Number num)
 			mtx(i,j) *= num;
 		}
 	}
+	return mtx;
 }
 
 void Matrix::subMatrix(Matrix mtx)
@@ -287,6 +290,7 @@ Matrix Matrix::subMatrixChain(Matrix mtx0, Matrix mtx1)
 			mtx(i,j) = mtx0(i,j)-mtx1(i,j);
 		}
 	}
+	return mtx;
 }
 
 void Matrix::subNumber(Number num)
@@ -371,7 +375,7 @@ void Matrix::print()
 			std::cout<< border;
 		}
 		for(size_t j=0; j<this->getSize().getJSize(); j++) {
-			std::cout << std::setw(5) << std::setprecision(4) << std::left << this->_elements(i,j);
+			std::cout << std::setw(8) << std::setprecision(4) << std::left << this->_elements(i,j);
 		}
 		std::cout << std::setw(2);
 		if(i == 0) {
@@ -429,12 +433,12 @@ void Matrix::operator+=(Matrix mtx)
 
 Matrix Matrix::operator-(Matrix mtx)
 {
-	this->subMatrixChain(*this, mtx);
+	return this->subMatrixChain(*this, mtx);
 }
 
 Matrix Matrix::operator-(Number num)
 {
-	this->subNumberChain(*this, num);
+	return this->subNumberChain(*this, num);
 }
 
 void Matrix::operator-=(Number num)
@@ -449,7 +453,7 @@ void Matrix::operator-=(Matrix mtx)
 
 Matrix Matrix::operator/(Number num)
 {
-	this->divideByNumberChain(*this, num);
+	return this->divideByNumberChain(*this, num);
 }
 
 void Matrix::operator/=(Number num)
