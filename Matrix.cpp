@@ -497,3 +497,39 @@ Number Matrix::norm()
 	}
 	return norm;
 }
+
+void Matrix::swapRows(size_t row0, size_t row1)
+{
+	this->_elements.swapRows(row0, row1);
+}
+
+Matrix Matrix::getD()
+{
+	Matrix D = Matrix::diagonal(0, this->getSize());
+	for(size_t i=0; i<this->getSize().getISize(); i++) {
+		D(i,i) = this->_elements(i,i);
+	}
+	return D;
+}
+
+Matrix Matrix::getR()
+{
+	Matrix R = Matrix::diagonal(0, this->getSize());
+	for(size_t i=0; i<this->getSize().getISize(); i++) {
+		for(size_t j=i+1; j<this->getSize().getJSize(); j++) {
+			R(i,j) = this->_elements(i,j);
+		}
+	}
+	return R;
+}
+
+Matrix Matrix::getL()
+{
+	Matrix L = Matrix::diagonal(0, this->getSize());
+	for(size_t i=0; i<this->getSize().getISize(); i++) {
+		for(size_t j=0; j<i && this->getSize().getJSize(); j++) {
+			L(i,j) = this->_elements(i,j);
+		}
+	}
+	return L;
+}

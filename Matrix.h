@@ -257,10 +257,35 @@ public:
 	Number norm();
 	
 	/**
+	 * Swaps rows with specified indexes
+	 * @param row0 First row index
+	 * @param row1 Second row index
+	 */
+	void swapRows(size_t row0, size_t row1);
+	
+	/**
 	 * Prints matrix in human readable format to standart output
 	 * @brief Print matrix
 	 */
 	void print();
+	
+	/**
+	 * Get diagonaled matrix
+	 * @return diagonaled matrix
+	 */
+	Matrix getD();
+	
+	/**
+	 * Get right matrix
+	 * @return right matrix
+	 */
+	Matrix getR();
+	
+	/**
+	 * Get left matrix
+	 * @return left matrix
+	 */
+	Matrix getL();
 	
 	/**
 	 * Reads matrix from stream
